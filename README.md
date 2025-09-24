@@ -1,129 +1,93 @@
-# **PE License Buddy**
+# PE License Buddy
 
-> **An open-source tool to track PE licenses, firm registrations, and continuing education requirements with reminders, automation, and intelligent client responses.**
+> An open-source tool to track PE licenses, firm registrations, and continuing education requirements with reminders, automation, and intelligent client responses.
 
----
+## Overview
+PE License Buddy helps engineering firms simplify compliance management by centralizing license and registration data, automating renewal reminders, and providing an API that can power dashboards or client responses.
 
-## **Overview**
-PE License Buddy helps engineering firms **simplify compliance management** by centralizing license and registration data, automating renewal reminders, and providing a dashboard for tracking continuing education (CEU) requirements.
+### What you can do today
+- Load license data from a CSV file or Airtable.
+- Query license status, expirations, and CEU progress through a lightweight REST API.
+- Generate reminder payloads and draft email notifications or send OpenPhone messages.
+- Extend or replace the data layer without changing higher-level services.
 
-This project is designed to:
-- Manage PE licenses across multiple states.
-- Track firm registrations and renewal deadlines.
-- Automate expiration notifications via Slack, email, or Trello.
-- Provide structured data for AI-driven client responses.
-- Be **open source and fork-friendly** for other engineering firms.
-
----
-
-## **Features**
-- **License Tracking:** Store individual PE licenses and firm registrations in one place.
-- **Automated Reminders:** Get alerts for upcoming renewals or CEU deadlines.
-- **Training & CEU Tracking:** Record completed CEUs vs. required totals by state.
-- **Client Response API:** Generate verified, consistent license verification replies.
-- **Airtable/CSV Backend:** Simple, portable data model to start quickly.
-- **Future Proof:** Pluggable architecture for SQL or API integrations.
-
----
-
-## **Tech Stack**
-| Layer        | Technology Options |
-|--------------|-------------------|
-| **Frontend** | React, Next.js |
-| **Backend**  | Node.js/Express (or Supabase/Firebase MVP) |
-| **Database** | Airtable or CSV (initial) |
-| **Notifications** | Slack, Email, Trello via webhooks/Zapier |
-| **Hosting** | GitHub Pages or Vercel |
-
----
-
-## **Getting Started**
-
-### **1. Clone the Repository**
-```bash
-git clone https://github.com/your-org/pe-license-buddy.git
-cd pe-license-buddy
-
+## Architecture
 ```
-### 2. Install Dependencies
-If using Node.js:
-```bash
-npm install
-
-### 3. Set Up Environment Variables
-Create a .env file in the root folder:
-
-ini
-AIRTABLE_API_KEY=your_api_key
-SLACK_WEBHOOK_URL=your_webhook_url
-Note: Never commit .env files to the repo.
-.env is already included in .gitignore.
+src/
+├── api/             # HTTP server built on Node's standard library
+├── data/            # Data providers (CSV or Airtable REST)
+├── reminders/       # Scheduler utilities
+├── services/        # Business logic for licenses and reminders
+└── index.js         # Application entry point
 ```
-### 4. Data Model
-Start with either:
 
-schemas/licenses.csv for CSV-based tracking
-schemas/airtable.md for Airtable setup
+- **Data providers** normalize records to a common schema regardless of the source.
+- **Services** compute expiration insights, CEU rollups, and reminder payloads.
+- **API** exposes JSON endpoints (see `docs/API.md`).
+- **Reminder engine** can deliver OpenPhone SMS messages directly and stores email drafts inside `outbox/` for review.
 
-### Sample fields:
+## Getting started
+1. Clone the repository and copy the example environment file:
+   ```bash
+   cp .env.example .env
+   ```
+2. Update `.env` with your CSV path or Airtable credentials. The default configuration reads from `schemas/licenses.csv`.
+3. Install dependencies (the MVP uses the Node standard library; `npm install` simply prepares the lock file):
+   ```bash
+   npm install
+   ```
+4. Start the API:
+   ```bash
+   npm start
+   ```
+   The service listens on `http://localhost:4000` by default.
+5. Run the test suite with Node's built-in runner:
+   ```bash
+   npm test
+   ```
 
-| Field Name        | Type     | Notes                               |
-| ----------------- | -------- | ----------------------------------- |
-| firm_name         | text     | Example: Oasis Engineering LLC      |
-| license_number    | text     | PE license number                   |
-| state             | dropdown | U.S. states                         |
-| status            | dropdown | Active, Expired, Pending Renewal    |
-| expiration_date   | date     | Renewal deadline                    |
-| ceu_required      | number   | Continuing education units required |
-| ceu_completed     | number   | Units logged this cycle             |
-| verification_url  | text     | Link to state portal                |
+## Configuration
+Environment variables are documented in `.env.example`. Key options include:
+- `DATA_SOURCE`: `csv` (default) or `airtable`.
+- `CSV_PATH`: Path to the CSV file.
+- `AIRTABLE_API_KEY`, `AIRTABLE_BASE_ID`, `AIRTABLE_TABLE`, `AIRTABLE_VIEW`: Required for Airtable integration.
+- `OPENPHONE_API_KEY`, `OPENPHONE_FROM_NUMBER`, `OPENPHONE_TO_NUMBERS`: Configure OpenPhone SMS delivery.
+- `EMAIL_RECIPIENTS`: Comma-separated list used when generating email drafts.
+- `ENABLE_SCHEDULER`: Set to `true` to enable the built-in reminder scheduler.
 
+## Data model
+Sample CSV data is provided in `schemas/licenses.csv`. Airtable users can mirror the structure defined in `schemas/airtable.md`.
 
-### Folder Structure
-```bash
-pe-license-buddy/
-│
-├── .github/               # Issues, PR templates, GitHub Actions
-│   └── workflows/
-│
-├── docs/                  # Project documentation
-│
-├── schemas/               # Data schemas
-│   ├── licenses.csv
-│   └── airtable.md
-│
-├── templates/             # Prebuilt response templates
-│   ├── responses.md
-│   └── reminders.md
-│
-├── src/                    # Application source code
-│   ├── api/                # REST API endpoints
-│   ├── dashboard/          # Frontend UI components
-│   └── reminders/          # Reminder engine
-│
-└── tests/                  # Unit and integration tests
-```
+Each license record includes:
+- `firm_name`
+- `license_number`
+- `state`
+- `status`
+- `expiration_date`
+- `ceu_required`
+- `ceu_completed`
+- Optional `holder_name` and `verification_url`
+
+## Reminders
+The reminder engine supports two channels:
+- **OpenPhone**: Sends formatted SMS messages through the OpenPhone API.
+- **Email**: Saves ready-to-send `.txt` drafts in `outbox/`. You can connect this directory to an SMTP process or review manually.
+
+Use the `/reminders/preview` and `/reminders/dispatch` endpoints to orchestrate reminders. Details are available in `docs/API.md` and the template snippets under `templates/`.
+
 ## Roadmap
- License dashboard MVP
- Airtable & CSV integrations
- Automated Slack/email reminders
- CEU tracking module
- REST API for external integrations
- GitHub Pages demo site
- AI-powered client verification agent
+- Interactive dashboard (React/Next.js) using the REST API.
+- Additional data adapters (SQL, Google Sheets).
+- Automated CEU tracking workflows.
+- Integration tests for data providers and scheduler.
 
 ## Contributing
-We welcome contributions!
-Please read CONTRIBUTING.md for:
-Code style guide
-PR workflow
-Issue reporting guidelines
+We welcome contributions! See `CONTRIBUTING.md` for workflow and style guidance.
 
 ## License
-This project is licensed under the MIT License.
-See the LICENSE file for details.
+This project is licensed under the MIT License. See `LICENSE` for details.
 
 ## Contact
-Project Lead: Enrique Lairet, PE
-Website: OasisEngineering.com
+Project Lead: Enrique Lairet, PE  
+Website: [OasisEngineering.com](https://OasisEngineering.com)  
 Support Email: info@oasisengineering.com
