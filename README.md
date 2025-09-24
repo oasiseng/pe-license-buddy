@@ -65,9 +65,19 @@ Start with either:
 schemas/licenses.csv for CSV-based tracking
 schemas/airtable.md for Airtable setup
 
-Sample fields:
+### Sample fields:
 
-<img width="490" height="296" alt="image" src="https://github.com/user-attachments/assets/d68bfe8a-04d0-4aa7-8d90-eed69bf92069" />
+| Field Name        | Type     | Notes                               |
+| ----------------- | -------- | ----------------------------------- |
+| firm_name         | text     | Example: Oasis Engineering LLC      |
+| license_number    | text     | PE license number                   |
+| state             | dropdown | U.S. states                         |
+| status            | dropdown | Active, Expired, Pending Renewal    |
+| expiration_date   | date     | Renewal deadline                    |
+| ceu_required      | number   | Continuing education units required |
+| ceu_completed     | number   | Units logged this cycle             |
+| verification_url  | text     | Link to state portal                |
+
 
 ### Folder Structure
 ```bash
