@@ -1,0 +1,6 @@
+firm_name,license_number,state,status,expiration_date,ceu_required,ceu_completed,holder_name,verification_url
+Nakamoto Engineering LLC,PE-12345,FL,Active,2025-03-15,18,12,Satoshi Nakamoto,https://floridasporelicenses.example.com/pe-12345
+Nakamoto Engineering LLC,PE-67890,GA,Pending Renewal,2024-12-01,30,28,Satoshi Nakamoto,https://georgiaboard.example.com/license/pe-67890
+Nakamoto Engineering LLC,FIRM-002,TX,Active,2025-07-31,0,0,,https://texasboard.example.com/firm/FIRM-002
+Nakamoto Engineering LLC,PE-24680,NC,Active,2024-10-20,15,15,Satoshi Nakamoto,
+Nakamoto Engineering LLC,PE-13579,AL,Expired,2023-09-15,12,10,Satoshi Nakamoto,https://alboard.example.com/pe-13579

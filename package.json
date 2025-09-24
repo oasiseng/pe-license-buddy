@@ -1,0 +1,21 @@
+{
+  "name": "pe-license-buddy",
+  "version": "1.0.0",
+  "description": "Compliance tracker for PE licenses, firm registrations, and continuing education reminders.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test"
+  },
+  "keywords": [
+    "engineering",
+    "compliance",
+    "licenses",
+    "reminders"
+  ],
+  "author": "",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {},
+  "devDependencies": {}
+}
